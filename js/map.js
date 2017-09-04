@@ -22,7 +22,7 @@ function getRandFromArray(array) {
 }
 
 function getRandInt(from, to) {
-  return parseInt(Math.random() * (to - from) + from);
+  return parseInt(Math.random() * (to - from) + from, 10);
 }
 
 function getRandFeatures() {
@@ -70,7 +70,7 @@ function generateApartments(count) {
           'x': x,
           'y': y
         }
-    })
+    });
   }
   return apartments;
 }
@@ -107,7 +107,7 @@ var renderPanel = function (app) {
     lodgeFeatures.appendChild(feature);
   }
   offerDialog.replaceChild(templateElement, oldPanel);
-}
+};
 
 var fragment = document.createDocumentFragment();
 var apartments = generateApartments(8);
