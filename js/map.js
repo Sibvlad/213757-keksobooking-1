@@ -13,9 +13,11 @@ var checkin = ['12:00', '13:00', '14:00'];
 var checkout = ['12:00', '13:00', '14:00'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var template = document.querySelector('#lodge-template').content;
-var offerDialog = document.querySelector('#offer-dialog');
-var oldPanel = offerDialog.querySelector('.dialog__panel');
-var dialogTitle = offerDialog.querySelector('.dialog__title');
+var dialog = document.querySelector('.dialog');
+var dialogClose = document.querySelector('.dialog__close');
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+var tokyoPinMap = document.querySelector('.tokyo__pin-map');
 
 function getRandFromArray(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -84,12 +86,24 @@ function renderPin(apartment) {
   img.setAttribute('width', '40');
   img.setAttribute('height', '40');
   img.setAttribute('src', apartment.author.avatar);
+  img.setAttribute('tabindex', '0');
   div.insertAdjacentHTML('afterBegin', img.outerHTML);
   return div;
 }
 
+function getApp(avatar) {
+  for (var j = 0; j < apartments.length; j++) {
+    if (apartments[j].author.avatar === avatar) {
+      return apartments[j];
+    }
+  }
+}
+
 var renderPanel = function (app) {
+  var offerDialog = document.querySelector('#offer-dialog');
+  var oldPanel = offerDialog.querySelector('.dialog__panel');
   var templateElement = template.cloneNode(true);
+  var dialogTitle = offerDialog.querySelector('.dialog__title');
   templateElement.querySelector('.lodge__title').textContent = app.offer.title;
   templateElement.querySelector('.lodge__address').textContent = app.offer.address;
   templateElement.querySelector('.lodge__price').textContent = app.offer.price + ' ₽/ночь';
@@ -106,6 +120,7 @@ var renderPanel = function (app) {
     feature.classList.add('feature__image--' + app.offer.features[i]);
     lodgeFeatures.appendChild(feature);
   }
+
   offerDialog.replaceChild(templateElement, oldPanel);
 };
 
@@ -115,9 +130,59 @@ var apartments = generateApartments(8);
 for (var i = 0; i < apartments.length; i++) {
   fragment.appendChild(renderPin(apartments[i]));
 }
-document.querySelector('.tokyo__pin-map').appendChild(fragment);
+tokyoPinMap.appendChild(fragment);
 
+renderPanel(apartments[0]);
 
-renderPanel(apartments[1]);
+function clickHandler(event) {
+  var checkPin = event.target.closest('.pin');
+  if (checkPin) {
+    delectPin();
+    checkPin.classList.add('.pin--active');
+    var img = checkPin.querySelector('img');
+    var src = img.getAttribute('src');
+    var app = getApp(src);
+    renderPanel(app);
+    dialog.style.display = 'block';
+  }
+}
 
+function delectPin() {
+  var element = document.querySelector('.pin--active');
+  if (element) {
+    element.classList.remove('pin--active');
+  }
+}
 
+function keydownHandler(event) {
+  if (event.keyCode === ENTER_KEYCODE) {
+    clickHandler(event);
+  }
+
+  if (event.keyCode === ESC_KEYCODE) {
+    closeDialogHandler();
+  }
+}
+
+function closeDialogHandler() {
+  dialog.style.display = 'none';
+  delectPin();
+}
+
+tokyoPinMap.addEventListener('click', clickHandler);
+tokyoPinMap.addEventListener('keydown', keydownHandler);
+
+dialogClose.addEventListener('click', closeDialogHandler);
+dialogClose.addEventListener('keydown', closeKeydownHandle);
+
+function closeKeydownHandle(event) {
+  if (event.keyCode === ENTER_KEYCODE) {
+    closeDialogHandler();
+  }
+}
+
+dialogClose.addEventListener('keydown', function (event) {
+  if (event.keyCode === ENTER_KEYCODE) {
+    closeDialogHandler();
+  }
+});
