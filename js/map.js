@@ -77,14 +77,6 @@ function generateApartments(count) {
   return apartments;
 }
 
-function getApp(avatar) {
-  for (var j = 0; j < apartments.length; j++) {
-    if (apartments[j].author.avatar === avatar) {
-      return apartments[j];
-    }
-  }
-}
-
 function renderPin(apartment) {
   var div = document.createElement('div');
   div.className = 'pin';
@@ -99,6 +91,13 @@ function renderPin(apartment) {
   return div;
 }
 
+function getApp(avatar) {
+  for (var j = 0; j < apartments.length; j++) {
+    if (apartments[j].author.avatar === avatar) {
+      return apartments[j];
+    }
+  }
+}
 
 var renderPanel = function (app) {
   var offerDialog = document.querySelector('#offer-dialog');
