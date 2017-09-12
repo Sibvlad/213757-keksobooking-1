@@ -72,4 +72,4 @@ window.form = (function () {
   form.setAttribute('method', 'POST');
   form.setAttribute('enctype', 'multipart/form-data');
   form.setAttribute('action', 'https://1510.dump.academy/keksobooking');
-});
+})();

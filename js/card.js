@@ -1,6 +1,6 @@
 'use strict';
 
-window.card = (function (app) {
+window.card = (function () {
 
   var template = document.querySelector('#lodge-template').content;
   var russianTypes = {
