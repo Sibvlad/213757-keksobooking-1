@@ -1,14 +1,15 @@
 'use strict';
 
 window.map = (function () {
-  var apartments = window.generateApartments(8);
 
   var fragment = document.createDocumentFragment();
   var dialogClose = document.querySelector('.dialog__close');
   var tokyoPinMap = document.querySelector('.tokyo__pin-map');
+  var _apartments = [];
 
   return {
-    render: function () {
+    render: function (apartments) {
+      _apartments = apartments;
       for (var i = 0; i < apartments.length; i++) {
         var pin = window.pin.render(apartments[i]);
         fragment.appendChild(pin);
@@ -22,16 +23,29 @@ window.map = (function () {
       mainPin.addEventListener('mousedown', onPinMove);
     },
     getApp: function (id) {
-      for (var j = 0; j < apartments.length; j++) {
-        if (apartments[j].author.avatar === id) {
-          return apartments[j];
+      for (var j = 0; j < _apartments.length; j++) {
+        if (_apartments[j].author.avatar === id) {
+          return _apartments[j];
         }
       }
       return '';
     },
+    onError: function (message) {
+      var errorBlock = document.querySelector('.header__error');
+      errorBlock.textContent = message;
+      errorBlock.classList.remove('invisible');
+    },
     dialog: document.querySelector('.dialog')
   };
 
+  // var form = document.querySelector('.notice__form');
+  // form.addEventListener('submit', function (evt) {
+  //   window.backend.save(new FormData(form), function () {
+  //
+  //     }
+  //   , onError);
+  //   evt.preventDefault();
+  // });
 
   function onPinMove(evt) {
     evt.preventDefault();
@@ -90,4 +104,4 @@ window.map = (function () {
   }
 })();
 
-window.map.render();
+window.backend.load(window.map.render, window.map.onError);
