@@ -2,7 +2,7 @@
 
 
 (function () {
-  var SERVER_URL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/keksobooking/data';
+  var SERVER_URL = 'https://1510.dump.academy/keksobooking/data';
 
   var map = function (onLoad, onError) {
 
@@ -40,7 +40,7 @@
     load: function (onLoad, onError) {
       var xhr = map(onLoad, onError);
 
-      xhr.open('GET', SERVER_URL + '/data');
+      xhr.open('GET', SERVER_URL);
       xhr.send();
     }
   };
