@@ -23,6 +23,12 @@ window.pin = (function () {
         element.classList.remove('pin--active');
       }
     },
+    removePins: function () {
+      var list = document.querySelectorAll('.tokyo__pin-map > .pin:not(.pin__main)');
+      for (var i = 0; i < list.length; i++) {
+        list[i].remove();
+      }
+    },
     openCard: function (event) {
       var checkPin = event.target.closest('.pin');
       if (checkPin) {
