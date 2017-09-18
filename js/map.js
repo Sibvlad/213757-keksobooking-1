@@ -3,34 +3,31 @@
 window.map = (function () {
 
   var fragment = document.createDocumentFragment();
-  var dialogClose = document.querySelector('.dialog__close');
   var tokyoPinMap = document.querySelector('.tokyo__pin-map');
   var form = document.querySelector('.notice__form');
   var _apartments = [];
 
   return {
+    start: function () {
+      window.map.updateForm();
+      document.querySelector('.tokyo__filters').addEventListener('change', window.map.applyFilters);
+      window.backend.load(window.map.applyFilters, window.map.onError);
+    },
     render: function (apartments) {
       _apartments = apartments;
       for (var i = 0; i < apartments.length; i++) {
         var pin = window.pin.render(apartments[i]);
+        pin.setAttribute('data-id', i.toString());
         fragment.appendChild(pin);
       }
       document.querySelector('.tokyo__pin-map').appendChild(fragment);
-      window.card.updatePanel(apartments[0]);
       tokyoPinMap.addEventListener('keydown', keydownHandler);
-      dialogClose.addEventListener('click', window.card.closePanel);
-      dialogClose.addEventListener('keydown', closeKeydownHandle);
       var mainPin = document.querySelector('.pin__main');
       mainPin.addEventListener('mousedown', onPinMove);
       form.addEventListener('submit', onFormSubmit);
     },
     getApp: function (id) {
-      for (var j = 0; j < _apartments.length; j++) {
-        if (_apartments[j].author.avatar === id) {
-          return _apartments[j];
-        }
-      }
-      return '';
+      return _apartments[id];
     },
     applyFilters: function () {
       window.debounce(function () {
@@ -84,6 +81,11 @@ window.map = (function () {
       errorBlock.textContent = message;
       errorBlock.classList.remove('invisible');
     },
+    updateForm: function () {
+      var mainPin = document.querySelector('.pin__main');
+      var address = document.querySelector('#address');
+      address.value = 'x: ' + (mainPin.offsetLeft + 32) + ', y: ' + (mainPin.offsetTop + 94);
+    },
     dialog: document.querySelector('.dialog')
   };
 
@@ -91,6 +93,7 @@ window.map = (function () {
     evt.preventDefault();
     window.backend.save(new FormData(form), function () {
       form.reset();
+      window.map.updateForm();
     }, window.map.onError);
   }
 
@@ -116,8 +119,18 @@ window.map = (function () {
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
-      target.style.top = (target.offsetTop - shift.y) + 'px';
-      target.style.left = (target.offsetLeft - shift.x) + 'px';
+
+      if (((target.offsetTop - shift.y) > 0) && ((target.offsetTop - shift.y) < 610)) {
+        target.style.top = (target.offsetTop - shift.y) + 'px';
+      } else {
+        target.style.top = target.offsetTop + 'px';
+      }
+
+      if (((target.offsetLeft - shift.x) > 0 && (target.offsetLeft - shift.x) < 1155)) {
+        target.style.left = (target.offsetLeft - shift.x) + 'px';
+      } else {
+        target.style.left = (target.offsetLeft) + 'px';
+      }
 
       var address = document.querySelector('#address');
       address.value = 'x: ' + (target.offsetLeft + 32) + ', y: ' + (target.offsetTop + 94);
@@ -134,7 +147,6 @@ window.map = (function () {
     tokyoPinMap.addEventListener('mouseup', onMouseUp);
   }
 
-
   function keydownHandler(event) {
     if (event.keyCode === 13) {
       window.pin.openCard(event);
@@ -143,12 +155,5 @@ window.map = (function () {
       window.card.closePanel();
     }
   }
-
-  function closeKeydownHandle(event) {
-    if (event.keyCode === 13) {
-      window.card.closePanel();
-    }
-  }
 })();
-document.querySelector('.tokyo__filters').addEventListener('change', window.map.applyFilters);
-window.backend.load(window.map.render, window.map.onError);
+window.map.start();

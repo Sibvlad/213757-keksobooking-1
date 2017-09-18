@@ -34,9 +34,22 @@ window.pin = (function () {
       if (checkPin) {
         window.pin.deselectPin();
         checkPin.classList.add('pin--active');
-        var id = checkPin.querySelector('img').getAttribute('src');
+        var id = checkPin.getAttribute('data-id');
         window.card.updatePanel(window.map.getApp(id));
         window.map.dialog.style.display = 'block';
+        var dialogClose = window.map.dialog.querySelector('.dialog__close');
+        dialogClose.addEventListener('click', window.pin.closeMouseClickHandler);
+        dialogClose.addEventListener('keydown', window.pin.closeKeydownHandler);
+      }
+    },
+    closeMouseClickHandler: function (event) {
+      event.preventDefault();
+      window.card.closePanel();
+    },
+    closeKeydownHandler: function (event) {
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        window.card.closePanel();
       }
     }
   };

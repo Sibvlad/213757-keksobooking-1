@@ -2,7 +2,7 @@
 
 
 (function () {
-  var SERVER_URL = 'https://1510.dump.academy/keksobooking/data';
+  var SERVER_URL = 'https://1510.dump.academy/keksobooking';
 
   var map = function (onLoad, onError) {
 
@@ -32,15 +32,16 @@
 
   window.backend = {
     save: function (data, onLoad, onError) {
-      var xhr = map(onLoad, onError);
-
-      xhr.open('POST', SERVER_URL);
-      xhr.send(data);
+      if (window.form.validate()) {
+        var xhr = map(onLoad, onError);
+        xhr.open('POST', SERVER_URL);
+        xhr.send(data);
+      }
     },
     load: function (onLoad, onError) {
       var xhr = map(onLoad, onError);
 
-      xhr.open('GET', SERVER_URL);
+      xhr.open('GET', SERVER_URL + '/data');
       xhr.send();
     }
   };
