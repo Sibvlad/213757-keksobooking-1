@@ -38,15 +38,15 @@ window.pin = (function () {
         window.card.updatePanel(window.map.getApp(id));
         window.map.dialog.style.display = 'block';
         var dialogClose = window.map.dialog.querySelector('.dialog__close');
-        dialogClose.addEventListener('click', window.pin.closeMouseClickHandler);
-        dialogClose.addEventListener('keydown', window.pin.closeKeydownHandler);
+        dialogClose.addEventListener('click', window.pin.onCloseMouseClick);
+        dialogClose.addEventListener('keydown', window.pin.onCloseKeydown);
       }
     },
-    closeMouseClickHandler: function (event) {
+    onCloseMouseClick: function (event) {
       event.preventDefault();
       window.card.closePanel();
     },
-    closeKeydownHandler: function (event) {
+    onCloseKeydown: function (event) {
       event.preventDefault();
       if (event.keyCode === 13) {
         window.card.closePanel();
